@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<!-- 🐺 LXR-HORSES — Stable UI | © 2026 iBoss21 / LXRCore | lxrcore.com -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Stable</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app" class="hidden">
+    <aside class="panel">
+      <header class="head">
+        <div class="brand"><div class="lxr-banner__avatar-wrap"><img id="brand-logo" class="lxr-banner__avatar" src="img/lxrcore-logo.png" alt="LXRCore"></div><span id="stable-name">Stable</span></div>
+        <div class="cash">$<span id="cash">0.00</span></div>
+      </header>
+      <nav class="tabs">
+        <button data-tab="owned" class="active" data-l="tab_owned">My horses</button>
+        <button data-tab="buy" data-l="tab_buy">Buy</button>
+        <button data-tab="tack" data-l="tab_tack">Tack</button>
+        <button data-tab="market" data-l="tab_market">Market</button>
+        <button data-tab="breed" data-l="tab_breed">Breeding</button>
+      </nav>
+      <section id="tab-owned" class="tab active"><div id="owned-list" class="list"></div></section>
+      <section id="tab-buy" class="tab">
+        <div class="filters"><select id="buy-class"></select><select id="buy-breed"></select></div>
+        <div id="buy-list" class="list"></div>
+      </section>
+      <section id="tab-tack" class="tab">
+        <div class="filters"><select id="tack-slot"></select><label class="chk"><input type="checkbox" id="tack-owned-only"> <span data-l="owned_only">Owned only</span></label></div>
+        <div id="tack-list" class="list"></div>
+      </section>
+      <section id="tab-market" class="tab"><div id="market-list" class="list"></div></section>
+      <section id="tab-breed" class="tab">
+        <div id="breed-box"></div>
+      </section>
+      <footer class="foot"><span data-l="hint_close">Backspace — close</span><span id="pending-wild"></span></footer>
+    </aside>
+
+    <main class="detail" id="detail"></main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
