@@ -6,6 +6,9 @@ A horse is a character on The Land of Wolves. It has a name, a temperament,
 cores that drain and fill, a bond that grows with care and breaks with
 neglect, tack that changes what it can do, and papers that say who owns it.
 
+![The stable](docs/img/stable.png)
+
+
 ## What it does
 
 * **Ownership** — horses are records the server owns (`lxr_horses`). Limits per
