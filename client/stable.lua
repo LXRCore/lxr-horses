@@ -88,7 +88,7 @@ local function openStable(stable)
     if not ok then return notify('error.' .. tostring(data)) end
     open = { stable = stable }
     SetNuiFocus(true, true)
-    SendNUIMessage({ action = 'open', data = data })
+    SendNUIMessage({ action = 'open', data = data, brand = LXRCore.Brand })
     startCamera()
     if data.owned[1] then showPreview(data.owned[1].model, data.owned[1].tack, data.owned[1].scale) end
 end

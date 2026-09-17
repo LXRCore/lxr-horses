@@ -235,6 +235,7 @@
 
   window.addEventListener('message', e => {
     const m = e.data || {};
+    if (m.theme || (m.brand && m.brand.theme) || (m.server && m.server.theme)) document.documentElement.dataset.theme = m.theme || (m.brand && m.brand.theme) || (m.server && m.server.theme);
     if (m.action === 'open') { D = m.data; L = D.locale || {}; sel = { owned: D.owned[0] ? D.owned[0].id : null, buy: null, tack: null, market: null }; applyLocale(); app.classList.remove('lxr-hidden'); setTab('owned'); }
     else if (m.action === 'close') { app.classList.add('lxr-hidden'); D = null; }
   });
