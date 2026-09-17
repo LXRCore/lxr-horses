@@ -36,7 +36,7 @@
     const b = document.createElement('button');
     b.className = 'lxr-row lxr-row--sub' + (opts.active ? ' is-active' : '') + (opts.locked ? ' is-locked' : '');
     b.innerHTML = `<span class="lxr-row-index">${pad(i)}</span>
-      <span class="lxr-row-body"><span class="lxr-row-name">${esc(name)}</span><span class="lxr-row-sub">${meta}</span></span>
+      <span class="lxr-row-body lxr-grow"><span class="lxr-row-name">${esc(name)}</span><span class="lxr-row-sub">${meta}</span></span>
       ${opts.badge ? `<span class="lxr-row-badge">${esc(opts.badge)}</span>` : ''}
       ${price != null ? `<span class="lxr-row-price lxr-num">${price}</span>` : ''}`;
     b.onclick = opts.onclick;
