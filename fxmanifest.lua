@@ -54,7 +54,9 @@ ui_page 'html/index.html'
 
 files {
     'html/index.html',
-    'html/style.css',
+    'html/lxr-ui.css',
+    'html/stable.css',
+    'html/fonts/*.woff2',
     'html/app.js',
     'html/img/*.png',
 }

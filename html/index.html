@@ -1,42 +1,47 @@
 <!DOCTYPE html>
-<!-- 🐺 LXR-HORSES — Stable UI | © 2026 iBoss21 / LXRCore | lxrcore.com -->
+<!-- LXR-HORSES — Stable | LXR UI Kit | © 2026 iBoss21 / LXRCore | lxrcore.com -->
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Stable</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="lxr-ui.css">
+  <link rel="stylesheet" href="stable.css">
 </head>
-<body>
-  <div id="app" class="hidden">
-    <aside class="panel">
-      <header class="head">
-        <div class="brand"><div class="lxr-banner__avatar-wrap"><img id="brand-logo" class="lxr-banner__avatar" src="img/lxrcore-logo.png" alt="LXRCore"></div><span id="stable-name">Stable</span></div>
-        <div class="cash">$<span id="cash">0.00</span></div>
+<body class="lxr">
+  <div id="app" class="lxr-hidden">
+    <aside class="lxr-panel lxr-hit st-panel">
+      <header class="st-head lxr-rule-b">
+        <img class="st-logo" src="img/lxrcore-logo.png" alt="LXRCore">
+        <div class="st-head-text">
+          <span class="lxr-mono lxr-t-ash" data-l="stable">Stable</span>
+          <span class="lxr-cut st-title" id="stable-name">Valentine</span>
+        </div>
+        <span class="lxr-num st-cash">$<span id="cash">0.00</span></span>
       </header>
-      <nav class="tabs">
-        <button data-tab="owned" class="active" data-l="tab_owned">My horses</button>
-        <button data-tab="buy" data-l="tab_buy">Buy</button>
-        <button data-tab="tack" data-l="tab_tack">Tack</button>
-        <button data-tab="market" data-l="tab_market">Market</button>
-        <button data-tab="breed" data-l="tab_breed">Breeding</button>
+      <nav class="st-tabs lxr-rule-b">
+        <button class="lxr-chip" data-tab="owned" aria-pressed="true" data-l="tab_owned">My horses</button>
+        <button class="lxr-chip" data-tab="buy" data-l="tab_buy">Buy</button>
+        <button class="lxr-chip" data-tab="tack" data-l="tab_tack">Tack</button>
+        <button class="lxr-chip" data-tab="market" data-l="tab_market">Market</button>
+        <button class="lxr-chip" data-tab="breed" data-l="tab_breed">Breeding</button>
       </nav>
-      <section id="tab-owned" class="tab active"><div id="owned-list" class="list"></div></section>
-      <section id="tab-buy" class="tab">
-        <div class="filters"><select id="buy-class"></select><select id="buy-breed"></select></div>
-        <div id="buy-list" class="list"></div>
+      <section id="tab-owned" class="st-tab is-on"><div id="owned-list" class="st-list"></div></section>
+      <section id="tab-buy" class="st-tab">
+        <div class="st-filters"><select class="lxr-input" id="buy-class"></select><select class="lxr-input" id="buy-breed"></select></div>
+        <div id="buy-list" class="st-list"></div>
       </section>
-      <section id="tab-tack" class="tab">
-        <div class="filters"><select id="tack-slot"></select><label class="chk"><input type="checkbox" id="tack-owned-only"> <span data-l="owned_only">Owned only</span></label></div>
-        <div id="tack-list" class="list"></div>
+      <section id="tab-tack" class="st-tab">
+        <div class="st-filters"><select class="lxr-input" id="tack-slot"></select><label class="lxr-chip st-chk"><input type="checkbox" id="tack-owned-only"><span data-l="owned_only">Owned only</span></label></div>
+        <div id="tack-list" class="st-list"></div>
       </section>
-      <section id="tab-market" class="tab"><div id="market-list" class="list"></div></section>
-      <section id="tab-breed" class="tab">
-        <div id="breed-box"></div>
-      </section>
-      <footer class="foot"><span data-l="hint_close">Backspace — close</span><span id="pending-wild"></span></footer>
+      <section id="tab-market" class="st-tab"><div id="market-list" class="st-list"></div></section>
+      <section id="tab-breed" class="st-tab"><div id="breed-box"></div></section>
+      <footer class="st-foot lxr-rule">
+        <span class="lxr-mono lxr-t-ash"><span class="lxr-key">Esc</span> <span data-l="hint_close">close</span></span>
+        <span class="lxr-mono lxr-t-blood" id="pending-wild"></span>
+      </footer>
     </aside>
-
-    <main class="detail" id="detail"></main>
+    <main class="st-detail lxr-hit" id="detail"></main>
   </div>
   <script src="app.js"></script>
 </body>
