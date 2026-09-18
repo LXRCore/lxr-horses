@@ -494,7 +494,7 @@ if Config.Training.enabled then
                     if blip then RemoveBlip(blip) blip = nil end
                 else
                     local target = vector3(cp.x, cp.y, cp.z)
-                    DrawMarker(0x50638AB9, target.x, target.y, target.z + 1.5, 0, 0, 0, 0, 0, 0, 2.0, 2.0, 2.0, 196, 165, 116, 160, true, false, 2, false, nil, nil, false)
+                    DrawMarker(0x50638AB9, target.x, target.y, target.z + 1.5, 0, 0, 0, 0, 0, 0, 2.0, 2.0, 2.0, 194, 28, 55, 160, true, false, 2, false, nil, nil, false)
                     if not blip then blip = N(0x554D9D53F696D002, 1664425300, target.x, target.y, target.z) end -- BLIP_ADD_FOR_COORDS
                     if #(GetEntityCoords(ped) - target) <= training.course.radius and IsPedOnMount(ped) then
                         training.index = training.index + 1
