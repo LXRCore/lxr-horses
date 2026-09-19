@@ -149,7 +149,7 @@ CreateThread(function()
                 N(0x74F74D3207ED525C, blip, joaat(Config.StableUI.blipSprite), true) -- SET_BLIP_SPRITE
                 N(0x9CB1A1623062F402, blip, stable.label)                         -- _SET_BLIP_NAME
                 if GetResourceState('lxr-mapcolor') == 'started' then
-                    pcall(function() N(0x662D364ABF16DE2F, blip, exports['lxr-mapcolor']:modifier()) end) -- BLIP_ADD_MODIFIER
+                    pcall(function() N(0x662D364ABF16DE2F, blip, exports['lxr-mapcolor']:modifier('stable')) end) -- BLIP_ADD_MODIFIER
                 end
                 blips[#blips + 1] = blip
             end
