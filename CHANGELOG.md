@@ -1,6 +1,7 @@
 # Changelog — lxr-horses
 
 ## 3.0.0 — 2026-09-19
+* Fix: `LXRCore.PlayerData` stays current — the core object comes back as a copy, so cash, job and metadata never changed after login in this resource. It now listens to `lxr:client:data` / `lxr:client:unloaded` and refreshes its copy.
 * Stables and training courses are lxr-interact cards instead of native prompts.
 * LXRCore v3 release line: every resource ships as 3.0.0 from here (the entries below are the road to it).
 
