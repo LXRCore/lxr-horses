@@ -469,16 +469,16 @@ end)
 -- ═══════════════════════════════════════════════════════════════════════════════
 if Config.Training.enabled then
     for _, course in ipairs(Config.Training.courses) do
-        LXRCore.Prompts.Create('lxr-horses:course:' .. course.id, course.start, 0xC7B5340A, Lang:t('prompt.train', { course = course.label }), {
-            type = 'callback', event = function()
+        LXRCore.Functions.Door('lxr-horses:course:' .. course.id, course.start, { label = Lang:t('prompt.train', { course = course.label }), action = Lang:t('prompt.open'), distance = 5.0, control = 0xC7B5340A }, (function()
+            return function()
                 if training then return end
                 if not horse or not IsPedOnMount(PlayerPedId()) or GetMount(PlayerPedId()) ~= horse.ent then return notify('error.mount_first') end
                 local ok, res = LXR.RPC.Server('lxr-horses:training:start', course.id)
                 if not ok then return notify('error.' .. tostring(res)) end
                 training = { course = res, index = 1, startedAt = GetGameTimer() }
                 notify('info.training_started', 'info', { course = res.label, time = res.timeLimitSec })
-            end,
-        }, 5.0, nil, 500)
+            end
+        end)())
     end
     CreateThread(function()
         local blip

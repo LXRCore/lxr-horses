@@ -5,7 +5,7 @@
      ═══════════════════════════════════════════════════════════════════════════ ]]
 
 Locale.Register('ka', {
-    prompt = {
+    prompt = { open = 'გახსნა',
         stable = '%{name}', feed = 'კვება', brush = 'გაწმენდა', pat = 'მოფერება', lead = 'წაყვანა', saddlebags = 'უნაგირის ჩანთები', inspect = 'დათვალიერება',
         train = 'წვრთნა: %{course}', accept_horse = 'მიიღეთ %{name}', decline_horse = 'უარყოფა',
     },

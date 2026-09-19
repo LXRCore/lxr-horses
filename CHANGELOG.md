@@ -1,6 +1,7 @@
 # Changelog — lxr-horses
 
 ## 3.0.0 — 2026-09-19
+* Stables and training courses are lxr-interact cards instead of native prompts.
 * LXRCore v3 release line: every resource ships as 3.0.0 from here (the entries below are the road to it).
 
 ## [1.0.0] — 2026-09-17

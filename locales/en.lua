@@ -5,7 +5,7 @@
      ═══════════════════════════════════════════════════════════════════════════ ]]
 
 Locale.Register('en', {
-    prompt = {
+    prompt = { open = 'Open',
         stable = '%{name}', feed = 'Feed', brush = 'Brush', pat = 'Pat', lead = 'Lead', saddlebags = 'Saddlebags', inspect = 'Inspect',
         train = 'Training: %{course}', accept_horse = 'Accept %{name}', decline_horse = 'Decline',
     },

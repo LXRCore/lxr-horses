@@ -141,8 +141,7 @@ end)
 -- ═══════════════════════════════════════════════════════════════════════════════
 CreateThread(function()
     for _, stable in ipairs(Config.Stables) do
-        LXRCore.Prompts.Create('lxr-horses:stable:' .. stable.id, stable.coords, Config.StableUI.key, Lang:t('prompt.stable', { name = stable.label }),
-            { type = 'callback', event = function() openStable(stable) end }, Config.StableUI.promptDistance, nil, 0)
+        LXRCore.Functions.Door('lxr-horses:stable:' .. stable.id, stable.coords, { label = Lang:t('prompt.stable', { name = stable.label }), action = Lang:t('prompt.open'), distance = Config.StableUI.promptDistance, control = Config.StableUI.key }, function() openStable(stable) end)
         if stable.blip then
             local blip = N(0x554D9D53F696D002, 1664425300, stable.coords.x, stable.coords.y, stable.coords.z) -- BLIP_ADD_FOR_COORDS
             if blip and blip ~= 0 then
