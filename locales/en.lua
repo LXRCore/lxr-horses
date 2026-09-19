@@ -10,6 +10,9 @@ Locale.Register('en', {
         train = 'Training: %{course}', accept_horse = 'Accept %{name}', decline_horse = 'Decline',
     },
     ui = {
+        act_graze = 'Let it graze', act_drink = 'Let it drink', act_rest = 'Let it rest', act_rear = 'Rear up', trade = 'Hand over',
+        act_graze_ing = '%{name} grazes', act_drink_ing = '%{name} drinks', act_rest_ing = '%{name} rests', act_rear_ing = '%{name} rears',
+        trade_pick = 'Which horse', trade_price = 'For how much', trade_price_hint = 'Dollars (0 = a gift)', trade_offer = '%{name} offers %{horse} (%{breed})', trade_for = 'for $%{price}', trade_gift = 'as a gift', accept = 'Accept', decline = 'Decline',
         horse = 'Horse', transfer = 'Horse transfer', saddlebags = '%{name} — Saddlebags',
         tab_owned = 'My horses', tab_buy = 'Buy', tab_tack = 'Tack', tab_market = 'Market', tab_breed = 'Breeding',
         owned_only = 'Owned only', hint_close = 'Backspace — close', no_horses = 'You own no horses yet.', out = 'Out', listed = 'Listed',
@@ -35,6 +38,7 @@ Locale.Register('en', {
     personality = 'Temperament',
     tag = { bond = 'Bond %{level}' },
     info = {
+        trade_sent = 'Offer made.', trade_declined = 'They declined.', trade_done_seller = '%{name} is theirs now ($%{price}).', trade_done_buyer = '%{name} is yours now. Find it at the stable.',
         bought = '%{name} is yours.', sold = 'Sold to the stable.', bond_up = '%{name} trusts you more (bond %{level}).',
         horse_ignores = '%{name} ignores you.', inspect = '%{name} — %{breed}. Speed %{speed}, stamina %{stamina}, health %{health}. Bond %{bond}, %{personality}.',
         transfer_sent = 'Offer sent.', transfer_offer = '%{name} is being offered to you by player %{id}.', transfer_declined = 'They declined.',
@@ -47,6 +51,7 @@ Locale.Register('en', {
         foal_born = '%{count} foal(s) registered.', given = 'Gave a %{label}.',
     },
     error = {
+        bond_low = 'The bond is not there yet.', they_have_enough = 'They cannot keep another horse.', too_many = 'You cannot keep another horse.', expired = 'The offer is gone.', busy = 'They are being offered something else.', nobody_nearby = 'Nobody close enough.',
         rate = 'Slow down', no_player = 'Not loaded', busy = 'Not now', cooldown = 'Wait a moment', restricted = 'You cannot call a horse here',
         no_horse = 'You have no horse to call', injured = 'That horse is injured', listed = 'That horse is listed for sale', spawn_failed = 'The horse could not come',
         too_far = 'Too far away', invalid = 'That is not possible', invalid_item = 'A horse cannot use that', not_injured = 'The horse is not injured',

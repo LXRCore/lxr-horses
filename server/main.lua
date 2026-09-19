@@ -411,6 +411,92 @@ local function nearOwnHorse(src, allowOthers)
     return rec, ent, ownerSrc
 end
 
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- 🐴 THE HORSE'S OWN DOINGS — graze, drink, rest, rear (bond-gated, cooled down, cores + bond)
+-- ═══════════════════════════════════════════════════════════════════════════════
+LXR.RPC.Register('lxr-horses:action', function(src, action)
+    if limited(src) then return false, 'rate' end
+    local A = Config.Actions[action]
+    if not A then return false, 'invalid' end
+    local rec, ent = nearOwnHorse(src, false)
+    if not rec then return false, ent end
+    if H.BondLevel(rec.xp) < (A.bond or 1) then return false, 'bond_low' end
+    if onCooldown(src, action .. ':' .. rec.id, A.cooldownMs or 60000) then return false, 'cooldown' end
+    TriggerClientEvent('lxr-horses:client:action', src, action, NetworkGetNetworkIdFromEntity(ent), A.seconds or 10)
+    SetTimeout((A.seconds or 10) * 1000, function()
+        local r = horseOf(src, rec.id)
+        if not r then return end
+        for k, v in pairs(A.cores or {}) do r.cores[k] = H.Clamp((r.cores[k] or 0) + v, 0, 100) end
+        r.xp = (r.xp or 0) + (A.xp or 0)
+        save(r)
+        publishState(src)
+    end)
+    log('info', 'horse ' .. action, { source = src, id = rec.id })
+    return true, A.seconds or 10
+end)
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- 🤝 HAND-OVER — the horse goes to another player for a price, face to face
+-- ═══════════════════════════════════════════════════════════════════════════════
+local offers = {}   -- target src → { from, horseId, price, at }
+LXR.RPC.Register('lxr-horses:trade:offer', function(src, targetId, horseId, price)
+    if limited(src) or not Config.Trade.enabled then return false, 'invalid' end
+    local Player, T = player(src), player(tonumber(targetId) or -1)
+    if not Player or not T or T.PlayerData.source == src then return false, 'no_player' end
+    if distance(src, GetEntityCoords(GetPlayerPed(T.PlayerData.source))) > Config.Trade.distance then return false, 'too_far' end
+    local rec, e = horseOf(src, horseId)
+    if not rec then return false, e end
+    if rec.listing or rec.dead then return false, 'listed' end
+    price = math.max(0, math.min(Config.Trade.maxPrice or 5000, math.floor((tonumber(price) or 0) * 100) / 100))
+    local ts = T.PlayerData.source
+    if offers[ts] and os.time() - offers[ts].at < Config.Trade.requestMs / 1000 then return false, 'busy' end
+    local n, limit = countOwned(T.PlayerData.citizenid, T.PlayerData.job.name)
+    if n >= limit then return false, 'they_have_enough' end
+    offers[ts] = { from = src, horseId = rec.id, price = price, at = os.time() }
+    local ci = Player.PlayerData.charinfo
+    TriggerClientEvent('lxr-horses:client:tradeOffer', ts, { from = src, name = (ci.firstname or '') .. ' ' .. (ci.lastname or ''), horse = rec.name, breed = (H.Catalog(rec.model) and LXRShared.HorseBreeds[H.Catalog(rec.model).breed].label) or '', price = price, ms = Config.Trade.requestMs })
+    return true
+end)
+LXR.RPC.Register('lxr-horses:trade:answer', function(src, yes)
+    local o = offers[src]
+    offers[src] = nil
+    if not o or os.time() - o.at > Config.Trade.requestMs / 1000 then return false, 'expired' end
+    local Buyer, Seller = player(src), player(o.from)
+    if not yes then if Seller then LXRCore.Notify(o.from, Lang:t('info.trade_declined'), 'inform') end return true end
+    if not Buyer or not Seller then return false, 'no_player' end
+    if distance(src, GetEntityCoords(GetPlayerPed(o.from))) > Config.Trade.distance + 1.0 then return false, 'too_far' end
+    local rec = horseOf(o.from, o.horseId)
+    if not rec or rec.listing or rec.dead then return false, 'no_horse' end
+    local n, limit = countOwned(Buyer.PlayerData.citizenid, Buyer.PlayerData.job.name)
+    if n >= limit then return false, 'too_many' end
+    if o.price > 0 then
+        if (Buyer.PlayerData.money.cash or 0) < o.price then return false, 'no_money' end
+        Buyer.Functions.RemoveMoney('cash', o.price, 'horse bought ' .. rec.name)
+        Seller.Functions.AddMoney('cash', o.price, 'horse sold ' .. rec.name)
+    end
+    if active[o.from] and active[o.from].id == rec.id then store(o.from, 'traded') end
+    local fromCid, toCid = rec.citizenid, Buyer.PlayerData.citizenid
+    rec.citizenid = toCid rec.active = false rec.favorite = false
+    LXRCore.DB.Update('UPDATE lxr_horse_tack SET citizenid = ? WHERE horse_id = ?', { toCid, rec.id })
+    save(rec)
+    if cache[fromCid] then cache[fromCid][rec.id] = nil end
+    if cache[toCid] then cache[toCid][rec.id] = rec end
+    LXRCore.Notify(o.from, Lang:t('info.trade_done_seller', { name = rec.name, price = ('%.2f'):format(o.price) }), 'success')
+    LXRCore.Notify(src, Lang:t('info.trade_done_buyer', { name = rec.name }), 'success')
+    log('info', 'horse traded', { from = o.from, to = src, id = rec.id, price = o.price })
+    LXRCore.Emit('lxr:horse:traded', {}, o.from, src, rec.id, o.price)
+    publishState(o.from) publishState(src)
+    return true
+end)
+LXR.RPC.Register('lxr-horses:mine', function(src)
+    local c = cid(src)
+    if not c then return false, 'no_player' end
+    local out = {}
+    for _, r in pairs(loadOwned(c)) do if not r.dead and not r.listing then out[#out + 1] = { id = r.id, name = r.name } end end
+    table.sort(out, function(a, b) return a.id < b.id end)
+    return true, out
+end)
+
 LXR.RPC.Register('lxr-horses:interact', function(src, action, itemName)
     if limited(src) then return false, 'rate' end
     local Player = player(src)

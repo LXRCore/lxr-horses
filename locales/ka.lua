@@ -10,6 +10,9 @@ Locale.Register('ka', {
         train = 'წვრთნა: %{course}', accept_horse = 'მიიღეთ %{name}', decline_horse = 'უარყოფა',
     },
     ui = {
+        act_graze = 'ძოვება', act_drink = 'დალევა', act_rest = 'დასვენება', act_rear = 'აყალყება', trade = 'გადაცემა',
+        act_graze_ing = '%{name} ძოვს', act_drink_ing = '%{name} სვამს', act_rest_ing = '%{name} ისვენებს', act_rear_ing = '%{name} ყალყზე დგება',
+        trade_pick = 'რომელი ცხენი', trade_price = 'რა ფასად', trade_price_hint = 'დოლარი (0 = საჩუქარი)', trade_offer = '%{name} გთავაზობს %{horse}-ს (%{breed})', trade_for = '$%{price}-ად', trade_gift = 'საჩუქრად', accept = 'თანხმობა', decline = 'უარი',
         horse = 'ცხენი', transfer = 'ცხენის გადაცემა', saddlebags = '%{name} — უნაგირის ჩანთები',
         tab_owned = 'ჩემი ცხენები', tab_buy = 'ყიდვა', tab_tack = 'აღკაზმულობა', tab_market = 'ბაზარი', tab_breed = 'გამრავლება',
         owned_only = 'მხოლოდ ჩემი', hint_close = 'Backspace — დახურვა', no_horses = 'ჯერ ცხენი არ გყავთ.', out = 'გარეთ', listed = 'გასაყიდია',
@@ -35,6 +38,7 @@ Locale.Register('ka', {
     personality = 'ხასიათი',
     tag = { bond = 'ნდობა %{level}' },
     info = {
+        trade_sent = 'შეთავაზება გაიგზავნა.', trade_declined = 'უარი თქვა.', trade_done_seller = '%{name} ახლა მისია ($%{price}).', trade_done_buyer = '%{name} ახლა შენია. თავლაში ნახე.',
         bought = '%{name} თქვენია.', sold = 'თავლას მიეყიდა.', bond_up = '%{name} უფრო გენდობათ (ნდობა %{level}).',
         horse_ignores = '%{name} არ გისმენთ.', inspect = '%{name} — %{breed}. სიჩქარე %{speed}, გამძლეობა %{stamina}, ჯანმრთელობა %{health}. ნდობა %{bond}, %{personality}.',
         transfer_sent = 'შეთავაზება გაიგზავნა.', transfer_offer = 'მოთამაშე %{id} გთავაზობთ ცხენს %{name}.', transfer_declined = 'უარი თქვეს.',
@@ -47,6 +51,7 @@ Locale.Register('ka', {
         foal_born = '%{count} კვიცი დარეგისტრირდა.', given = 'გადაეცა %{label}.',
     },
     error = {
+        bond_low = 'კავშირი ჯერ საკმარისი არ არის.', they_have_enough = 'მას სხვა ცხენი აღარ ეტევა.', too_many = 'შენ სხვა ცხენი აღარ გეტევა.', expired = 'შეთავაზება აღარ არის.', busy = 'მას სხვა რამეს სთავაზობენ.', nobody_nearby = 'ახლოს არავინაა.',
         rate = 'შეანელეთ', no_player = 'არ არის ჩატვირთული', busy = 'ახლა არა', cooldown = 'ცოტა მოიცადეთ', restricted = 'აქ ცხენის გამოძახება არ შეიძლება',
         no_horse = 'გამოსაძახებელი ცხენი არ გყავთ', injured = 'ეს ცხენი დაშავებულია', listed = 'ეს ცხენი გასაყიდადაა გამოტანილი', spawn_failed = 'ცხენმა ვერ მოაღწია',
         too_far = 'ძალიან შორს ხართ', invalid = 'ეს შეუძლებელია', invalid_item = 'ცხენს ეს არ გამოადგება', not_injured = 'ცხენი არ არის დაშავებული',

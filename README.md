@@ -30,6 +30,8 @@ neglect, tack that changes what it can do, and papers that say who owns it.
 * **Wild herds** — region herds with rare coats, lasso-and-ride taming, a
   horsemanship skill gate, registration fee and daily limits at the stable.
 * **Training** — checkpoint courses that raise a trained stat and the bond.
+* **Doings** — graze, drink at water, rest, rear: bond-gated cards on the horse (lxr-interact), each fills cores and earns bond with the game's own animations. `Config.Actions`.
+* **Hand-over** — offer a horse to the closest player for a price or as a gift; tack and saddlebags move with it. `Config.Trade`.
 * **Breeding** — stallion + mare at a stable, gestation, foal stats inherited.
 * **Saddlebags** — a stash on the horse through lxr-inventory with owner, job
   and lawman search rules.

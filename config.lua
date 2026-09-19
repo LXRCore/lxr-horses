@@ -155,6 +155,19 @@ Config.Interactions = {
     mountedShortcuts = { feed = 0x4CC0E2FE, brush = 0x8CC9CD42 }, -- B / X while riding (nil = off)
 }
 
+-- The horse's own doings (the game's own animal animations, names from the animation list). Bond levels gate them;
+-- each fills a core and earns bond, with a cooldown. The owner stands by while the horse does it.
+Config.Actions = {
+    graze = { bond = 1, seconds = 12, cooldownMs = 120000, cores = { hunger = 15, mood = 3 }, xp = 4, dict = 'amb_creature_mammal@world_horse_grazing@base', clip = 'base' },
+    drink = { bond = 1, seconds = 10, cooldownMs = 120000, cores = { thirst = 25, mood = 2 }, xp = 4, dict = 'amb_creature_mammal@world_horse_drink_ground@base', clip = 'base', nearWater = 6.0 },
+    rest  = { bond = 2, seconds = 20, cooldownMs = 300000, cores = { stamina = 25, health = 5, mood = 5 }, xp = 6, dict = 'amb_creature_mammal@world_horse_resting@base', clip = 'base' },
+    rear  = { bond = 4, seconds = 4,  cooldownMs = 60000,  cores = { mood = 4 }, xp = 3, dict = 'amb_creature_mammal@world_horse_rearing', clip = 'base' },
+}
+
+-- Handing a horse to another player: an offer for a price (0 = a gift), accepted face to face; ownership,
+-- tack and saddlebags move with it.
+Config.Trade = { enabled = true, distance = 4.0, maxPrice = 5000, requestMs = 30000 }
+
 -- Saddlebags: a stash on the horse, opened through lxr-inventory server-side.
 Config.Saddlebags = {
     enabled        = true,

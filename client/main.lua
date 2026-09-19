@@ -18,6 +18,7 @@ local LXR = exports['lxr-core']:GetLXR()
 local H = LXRHorses.Logic
 
 local horse = nil        -- { ent, id, view }
+local cardsOn = false    -- lxr-interact carries the options; the native prompts only otherwise
 local tagVisible = true
 local prompts = {}
 local wildLocal = {}     -- herdId → { ents }
@@ -254,7 +255,7 @@ CreateThread(function()
                 lastRide = GetGameTimer()
                 TriggerServerEvent('lxr-horses:server:riding')
             end
-            if d <= Config.Interactions.distance and not mounted then
+            if d <= Config.Interactions.distance and not mounted and not cardsOn then
                 sleep = 0
                 ensurePrompts()
                 setPromptsVisible(true)
@@ -345,6 +346,93 @@ RegisterNetEvent('lxr-horses:client:anim', function(action, item)
     if horse and DoesEntityExist(horse.ent) and (action == 'feed' or action == 'brush' or action == 'pat') then
         TaskLookAtEntity(horse.ent, ped, 3000, 2048, 3, 0)
     end
+end)
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- 🃏 THE CARDS — lxr-interact options on any horse (the native prompts only when it is not running)
+-- ═══════════════════════════════════════════════════════════════════════════════
+local function progress(label, ms)
+    if GetResourceState('lxr-nui') ~= 'started' then Wait(ms) return true end
+    local done = nil
+    exports['lxr-nui']:Progress({ label = label, duration = ms, canCancel = false }, function(ok) done = ok end)
+    while done == nil do Wait(50) end
+    return done
+end
+local function ownHorse(e) return horse ~= nil and DoesEntityExist(horse.ent) and e == horse.ent end
+local function bondOf() return horse and horse.view and horse.view.bond or 1 end
+local function nearWater(ent)
+    local c = GetEntityCoords(ent)
+    local f = GetEntityForwardVector(ent)
+    for _, d in ipairs({ 1.5, 3.0, 5.0 }) do
+        local p = c + f * d
+        local ok, h = GetWaterHeight(p.x, p.y, p.z)
+        if ok and math.abs(h - p.z) < 2.5 then return true end
+    end
+    return false
+end
+local function doAction(action)
+    local ok, res = LXR.RPC.Server('lxr-horses:action', action)
+    if not ok then return notify('error.' .. tostring(res)) end
+end
+RegisterNetEvent('lxr-horses:client:action', function(action, netId, seconds)
+    local A = Config.Actions[action]
+    local ent = NetworkGetEntityFromNetworkId(netId)
+    if not A or ent == 0 then return end
+    RequestAnimDict(A.dict)
+    local t = GetGameTimer() + 2000
+    while not HasAnimDictLoaded(A.dict) and GetGameTimer() < t do Wait(10) end
+    if HasAnimDictLoaded(A.dict) then TaskPlayAnim(ent, A.dict, A.clip, 2.0, -2.0, -1, 1, 0.0, false, false, false)
+    else print(('^3[lxr-horses]^7 action %s: dictionary %s did not load'):format(action, A.dict)) end
+    progress(Lang:t('ui.act_' .. action .. '_ing', { name = horse and horse.view.name or '' }), (seconds or 10) * 1000)
+    if DoesEntityExist(ent) then ClearPedTasks(ent) end
+    RemoveAnimDict(A.dict)
+end)
+-- handing a horse over: pick one of mine, a price, the closest player
+local function offerHorse()
+    local pid, dist = LXRCore.Functions.GetClosestPlayer()
+    if pid == -1 or dist > Config.Trade.distance then return notify('error.nobody_nearby') end
+    local ok, mine = LXR.RPC.Server('lxr-horses:mine')
+    if not ok or #mine == 0 then return notify('error.no_horse') end
+    local rows = {}
+    for _, h in ipairs(mine) do rows[#rows + 1] = { id = h.id, name = h.name } end
+    exports['lxr-nui']:Menu({ title = Lang:t('ui.trade_pick'), rows = rows }, function(id)
+        if not id then return end
+        exports['lxr-nui']:Input({ title = Lang:t('ui.trade_price'), fields = { { id = 'price', label = Lang:t('ui.trade_price_hint'), type = 'number', value = 0 } } }, function(v)
+            if not v then return end
+            local ok2, err = LXR.RPC.Server('lxr-horses:trade:offer', GetPlayerServerId(pid), id, tonumber(v.price) or 0)
+            if ok2 then notify('info.trade_sent') else notify('error.' .. tostring(err)) end
+        end)
+    end)
+end
+RegisterNetEvent('lxr-horses:client:tradeOffer', function(o)
+    CreateThread(function()
+        local answer = nil
+        exports['lxr-nui']:Menu({ title = Lang:t('ui.trade_offer', { name = o.name, horse = o.horse, breed = o.breed }), subtitle = o.price > 0 and Lang:t('ui.trade_for', { price = ('%.2f'):format(o.price) }) or Lang:t('ui.trade_gift'),
+            rows = { { id = 'yes', name = Lang:t('ui.accept') }, { id = 'no', name = Lang:t('ui.decline') } } }, function(id) answer = id == 'yes' end)
+        local t = GetGameTimer() + (o.ms or 30000)
+        while answer == nil and GetGameTimer() < t do Wait(100) end
+        local ok, err = LXR.RPC.Server('lxr-horses:trade:answer', answer == true)
+        if not ok and answer then notify('error.' .. tostring(err)) end
+    end)
+end)
+RegisterCommand('horsetrade', offerHorse, false)
+CreateThread(function()
+    while GetResourceState('lxr-interact') ~= 'started' do Wait(1000) end
+    cardsOn = true
+    local I = exports['lxr-interact']
+    I:AddGlobal('lxr-horses:horse', 'horse', { label = Lang:t('ui.horse'), distance = Config.Interactions.distance, options = {
+        { label = Lang:t('ui.feed'), key = 'E', canInteract = function(e) return e ~= nil and (ownHorse(e) or Config.Interactions.allowOthersToFeed) end,
+          onSelect = function() local items = feedItems() if #items == 0 then notify('error.no_feed') else interact('feed', items[1]) end end },
+        { label = Lang:t('ui.brush'), key = 'G', canInteract = function(e) return e ~= nil and (ownHorse(e) or Config.Interactions.allowOthersToBrush) end, onSelect = function() interact('brush') end },
+        { label = Lang:t('ui.pat'), key = 'R', canInteract = function(e) return e ~= nil end, onSelect = function() interact('pat') end },
+        { label = Lang:t('ui.saddlebags'), key = 'X', canInteract = ownHorse, onSelect = function() TriggerServerEvent('lxr-horses:server:saddlebags') end },
+        { label = Lang:t('ui.inspect'), key = 'H', canInteract = ownHorse, onSelect = function() TriggerEvent('lxr-horses:client:inspect') end },
+        { label = Lang:t('ui.act_graze'), key = 'F', canInteract = function(e) return ownHorse(e) and bondOf() >= Config.Actions.graze.bond end, onSelect = function() doAction('graze') end },
+        { label = Lang:t('ui.act_drink'), key = 'F', canInteract = function(e) return ownHorse(e) and bondOf() >= Config.Actions.drink.bond and nearWater(e) end, onSelect = function() doAction('drink') end },
+        { label = Lang:t('ui.act_rest'), key = 'Z', canInteract = function(e) return ownHorse(e) and bondOf() >= Config.Actions.rest.bond end, onSelect = function() doAction('rest') end },
+        { label = Lang:t('ui.act_rear'), key = 'V', canInteract = function(e) return ownHorse(e) and bondOf() >= Config.Actions.rear.bond end, onSelect = function() doAction('rear') end },
+        { label = Lang:t('ui.trade'), key = 'T', canInteract = function(e) return ownHorse(e) and Config.Trade.enabled end, onSelect = offerHorse },
+    }})
 end)
 
 RegisterNetEvent('lxr-horses:client:inspect', function()
